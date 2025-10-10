@@ -37,4 +37,5 @@ android {
 dependencies {
   implementation("androidx.core:core-ktx:1.17.0")
   implementation("androidx.appcompat:appcompat:1.7.1")
+  implementation("org.apache.commons:commons-imaging:1.0.0-alpha6")
 }
