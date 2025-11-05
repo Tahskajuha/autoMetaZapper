@@ -3,6 +3,7 @@ package com.example.autometazapper.ui
 
 
 
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,6 +21,8 @@ import com.example.autometazapper.ui.components.ExifOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import com.example.autometazapper.ui.ExifField
+
 
 
 

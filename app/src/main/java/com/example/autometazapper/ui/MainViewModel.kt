@@ -1,17 +1,13 @@
 package com.example.autometazapper.ui
 
+
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
-enum class ExifField(val displayName: String) {
-    LOCATION("Location"),
-    DATE_TIME("Date & Time"),
-    CAMERA_MODEL("Camera Model"),
-    ORIENTATION("Orientation")
-}
+
 
 data class UiState(
     val selectedImageUri: Uri? = null,
@@ -39,3 +35,4 @@ class MainViewModel : ViewModel() {
         }
     }
 }
+

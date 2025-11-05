@@ -36,7 +36,8 @@ fun ExifOptions(
                     onCheckedChange = { onToggle(field, it) }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(field.displayName)
+                Text(text = field.displayName)
+
             }
         }
     }
