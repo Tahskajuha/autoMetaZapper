@@ -22,37 +22,38 @@ import kotlinx.coroutines.withContext
 @Composable
 fun PhotoPreview(uri: Uri?) {
     val context = LocalContext.current
-    val bitmap by produceState<Bitmap?>(initialValue = null, uri) {
-        value = uri?.let { loadBitmap(context.contentResolver, it) }
+    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+
+    LaunchedEffect(uri) {
+        bitmap = uri?.let {
+            withContext(Dispatchers.IO) {
+                try {
+                    if (android.os.Build.VERSION.SDK_INT >= 28) {
+                        val source = android.graphics.ImageDecoder.createSource(context.contentResolver, it)
+                        android.graphics.ImageDecoder.decodeBitmap(source)
+                    } else {
+                        MediaStore.Images.Media.getBitmap(context.contentResolver, it)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    null
+                }
+            }
+        }
     }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(240.dp)
+            .height(250.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surfaceVariant),
         contentAlignment = Alignment.Center
     ) {
         if (bitmap != null) {
-            Image(bitmap = bitmap!!.asImageBitmap(), contentDescription = "Selected photo")
+            Image(bitmap = bitmap!!.asImageBitmap(), contentDescription = "Selected Photo")
         } else {
             Text("No photo selected")
         }
     }
 }
-
-suspend fun loadBitmap(cr: android.content.ContentResolver, uri: Uri): Bitmap? =
-    withContext(Dispatchers.IO) {
-        try {
-            if (android.os.Build.VERSION.SDK_INT >= 28) {
-                val source = android.graphics.ImageDecoder.createSource(cr, uri)
-                android.graphics.ImageDecoder.decodeBitmap(source)
-            } else {
-                MediaStore.Images.Media.getBitmap(cr, uri)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
