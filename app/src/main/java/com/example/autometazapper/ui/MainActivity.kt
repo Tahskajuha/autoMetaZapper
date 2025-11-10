@@ -79,10 +79,8 @@ fun AutoMetaZapperUI(vm: MainViewModel = viewModel()) {
                 .verticalScroll(rememberScrollState()), // ✅ Scrollable
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // ✅ Photo preview
             PhotoPreview(uri = uiState.selectedImageUri)
 
-            // ✅ Buttons
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 PhotoPicker { uri -> vm.setImageUri(uri) }
 
@@ -105,7 +103,6 @@ fun AutoMetaZapperUI(vm: MainViewModel = viewModel()) {
                 }
             }
 
-            // ✅ Auto clean toggle
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Auto-clean:", modifier = Modifier.weight(1f))
                 Switch(
@@ -114,7 +111,6 @@ fun AutoMetaZapperUI(vm: MainViewModel = viewModel()) {
                 )
             }
 
-            // ✅ EXIF field options
             ExifOptions(
                 selectedFields = uiState.selectedFields,
                 onToggle = { field: ExifField, enabled: Boolean ->
