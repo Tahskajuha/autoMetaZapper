@@ -79,8 +79,10 @@ fun AutoMetaZapperUI(vm: MainViewModel = viewModel()) {
                 .verticalScroll(rememberScrollState()), // ✅ Scrollable
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            // ✅ Preview selected photo
             PhotoPreview(uri = uiState.selectedImageUri)
 
+            // ✅ Image picker and clean button
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 PhotoPicker { uri -> vm.setImageUri(uri) }
 
@@ -103,6 +105,7 @@ fun AutoMetaZapperUI(vm: MainViewModel = viewModel()) {
                 }
             }
 
+            // ✅ Auto-clean toggle
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Auto-clean:", modifier = Modifier.weight(1f))
                 Switch(
@@ -111,13 +114,42 @@ fun AutoMetaZapperUI(vm: MainViewModel = viewModel()) {
                 )
             }
 
+            // ✅ EXIF options list
             ExifOptions(
                 selectedFields = uiState.selectedFields,
                 onToggle = { field: ExifField, enabled: Boolean ->
                     vm.toggleField(field, enabled)
                 }
             )
+
+            // ✅ Preset Save / Apply Buttons
+            Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                val presetName = "Default"
+
+                Button(onClick = {
+                    vm.savePreset(context, presetName)
+                    scope.launch {
+                        snackbarHostState.showSnackbar("💾 Preset '$presetName' saved successfully!")
+                    }
+                }) {
+                    Text("Save Preset")
+                }
+
+                Button(onClick = {
+                    vm.applyPreset(context, presetName)
+                    scope.launch {
+                        snackbarHostState.showSnackbar("✅ Preset '$presetName' applied!")
+                    }
+                }) {
+                    Text("Apply Preset")
+                }
+            }
         }
     }
 }
-

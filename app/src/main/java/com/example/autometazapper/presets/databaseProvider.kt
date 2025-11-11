@@ -1,16 +1,19 @@
 package com.example.autometazapper.ui
 
+import android.content.Context
+import androidx.room.Room
+
 object DatabaseProvider {
+    @Volatile
     private var INSTANCE: AppDatabase? = null
 
     fun get(context: Context): AppDatabase {
-        if (INSTANCE == null) {
-            INSTANCE = Room.databaseBuilder(
+        return INSTANCE ?: synchronized(this) {
+            INSTANCE ?: Room.databaseBuilder(
                 context.applicationContext,
                 AppDatabase::class.java,
                 "presets_db"
-            ).build()
+            ).build().also { INSTANCE = it }
         }
-        return INSTANCE!!
     }
 }

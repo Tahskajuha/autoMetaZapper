@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import java.io.File
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 data class UiState(
     val selectedImageUri: Uri? = null,
@@ -45,7 +47,8 @@ class MainViewModel : ViewModel() {
         val currentUri = _uiState.value.selectedImageUri ?: return
 
         // Perform cleaning
-        val cleanedFile: File? = ExifCleaner.cleanImage(context, currentUri, _uiState.value.selectedFields)
+        val cleanedFile: File? =
+            ExifCleaner.cleanImage(context, currentUri, _uiState.value.selectedFields)
         if (cleanedFile == null) {
             Log.e("MainViewModel", "Failed to clean image.")
             return
@@ -71,6 +74,39 @@ class MainViewModel : ViewModel() {
 
         } catch (e: Exception) {
             Log.e("MainViewModel", "Error sharing cleaned image: ${e.message}", e)
+        }
+    }
+
+    fun savePreset(context: Context, name: String) {
+        val dao = DatabaseProvider.get(context).presetDao()
+
+        val preset = Preset(
+            name = name,
+            settingsJson = _uiState.value.selectedFields.joinToString(","), // convert Set to CSV
+        )
+
+        viewModelScope.launch {
+            dao.insert(preset)
+        }
+    }
+
+    fun applyPreset(context: Context, name: String) {
+        val dao = DatabaseProvider.get(context).presetDao()
+        viewModelScope.launch {
+            val preset = dao.getByName(name)
+            preset?.let {
+                val fields = it.settingsJson.split(",").mapNotNull { fieldName ->
+                    try {
+                        ExifField.valueOf(fieldName)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }.toSet()
+
+                _uiState.update { state: UiState ->
+                    state.copy(selectedFields = fields)
+                }
+            }
         }
     }
 }

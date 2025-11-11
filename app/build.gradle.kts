@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.kapt") // ✅ Needed for Room annotation processor
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
@@ -22,7 +23,7 @@ android {
     }
 
     kotlin {
-        jvmToolchain(17) // ensures both Kotlin & Java use Java 17
+        jvmToolchain(17) // ✅ Ensures both Kotlin & Java use Java 17
     }
 
     buildFeatures {
@@ -41,25 +42,30 @@ android {
 }
 
 dependencies {
-    // Core + Jetpack
+    // ✅ Core Android + Jetpack
     implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.activity:activity-compose:1.9.3")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
 
-    // Jetpack Compose
+    // ✅ Jetpack Compose (Material 3 + UI)
     implementation("androidx.compose.ui:ui:1.7.2")
     implementation("androidx.compose.material3:material3:1.3.0")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.7.2")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.7.2")
 
-    // EXIF metadata
+    // ✅ EXIF metadata (used for image cleaning)
     implementation("androidx.exifinterface:exifinterface:1.3.7")
 
-    // Testing
+    // ✅ Room Database (for storing cleaned image logs or settings)
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
+    kapt("androidx.room:room-compiler:$room_version") // Annotation processor
+    implementation("androidx.room:room-ktx:$room_version") // Coroutines support
+
+    // ✅ Testing
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    implementation("androidx.appcompat:appcompat:1.7.1")
-
-
-
 }
